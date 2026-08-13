@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>メールアドレスを変更する</title>
+<style>
+body { margin:0; background:#eef2f4; font-family:system-ui, "Noto Sans JP"; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.card { width:100%; max-width:480px; background:white; padding:28px; border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.08); }
+h1 { margin-top:0; font-size:22px; color:#254152; }
+.form-row { margin-bottom:18px; }
+label { display:block; margin-bottom:8px; font-weight:600; }
+input[type=text], input[type=email] { width:100%; padding:12px; border:1px solid #cfd6da; border-radius:8px; font-size:15px; box-sizing:border-box; background:#f9fbfc; }
+.btn { width:100%; padding:12px; background:#4ba3d8; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px; }
+.btn-back { width:100%; padding:12px; background:#9fbfcf; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px; margin-top:12px; }
+.msg { margin-top:12px; padding:12px; border-radius:8px; font-size:14px; }
+.msg-success { background:#e9f9ef; color:#2a8a52; border:1px solid #bfe7d1; }
+.msg-error { background:#fdecea; color:#c0392b; border:1px solid #f5c6c3; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>メールアドレスを変更する</h1>
+
+  <form id="emailForm">
+    <div class="form-row">
+      <label for="currentEmail">現在のメールアドレス</label>
+      <input id="currentEmail" type="email" value="<%= currentEmail %>" disabled />
+    </div>
+
+    <div class="form-row">
+      <label for="newEmail">新しいメールアドレス</label>
+      <input id="newEmail" name="newEmail" type="email" placeholder="example@mail.com" required />
+    </div>
+
+    <button class="btn" type="submit">メールアドレスを変更する</button>
+    <button class="btn-back" type="button" onclick="history.back()">戻る</button>
+
+    <div id="msgArea"></div>
+  </form>
+</div>
+
+<script>
+const form = document.getElementById("emailForm");
+const msgArea = document.getElementById("msgArea");
+
+function showMsg(text, type){
+  msgArea.innerHTML = `<div class="msg msg-${type}">${text}</div>`;
+}
+
+form.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  msgArea.innerHTML = "";
+
+  const newEmail = document.getElementById("newEmail").value.trim();
+
+  // メール形式チェック
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)){
+    showMsg("正しいメールアドレスを入力してください。", "error");
+    return;
+  }
+
+  try {
+    const res = await fetch("/change-email", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ newEmail }),
+      credentials: "same-origin"
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+      showMsg(data.message, "success");
+      form.reset();
+    } else {
+      showMsg(data.message || "更新に失敗しました。", "error");
+    }
+
+  } catch(err){
+    console.error(err);
+    showMsg("サーバーエラーが発生しました。", "error");
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>新規登録</title>
+  <style>
+    body {
+      font-family: "Hiragino Sans", "Meiryo", sans-serif;
+      background-color: #f0f4ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .register-box {
+      background-color: #dbe8fa;
+      width: 320px;
+      padding: 30px 35px 40px;
+      border-top-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 0;
+      box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.15);
+      text-align: left;
+      position: relative;
+    }
+
+    .register-box h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 25px;
+      font-size: 1.7em;
+      font-weight: bold;
+      color: #000;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff1b8;
+      font-size: 1em;
+      outline: none;
+      box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    input:focus {
+      border-color: #7aa9ff;
+      box-shadow: 0 0 4px rgba(122, 169, 255, 0.6);
+    }
+
+    .btn-area {
+      text-align: right;
+    }
+
+    button {
+      background-color: #e7c8e7;
+      border: 1px solid #bba3bb;
+      border-radius: 8px;
+      padding: 6px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 1px 2px 3px rgba(0,0,0,0.15);
+    }
+
+    button:hover {
+      background-color: #dab5da;
+    }
+
+    /* エラーメッセージ */
+    .error-msg {
+      color: red;
+      margin-bottom: 15px;
+    }
+
+    /* 成功メッセージ */
+    .success-msg {
+      color: green;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2>新規登録</h2>
+
+    <% if (messages && messages.length > 0) { %>
+      <div class="error-msg">
+        <% messages.forEach(msg => { %>
+          <div><%= msg %></div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <form id="registerForm">
+      <label for="name">ユーザー名</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">メールアドレス</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">パスワード</label>
+      <input type="password" id="password" name="password" required>
+
+      <div class="btn-area">
+        <button type="submit">登録</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!name || !email || !password) {
+        alert("全ての項目を入力してください。");
+        return;
+      }
+
+      try {
+        const response = await fetch("/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("登録が完了しました！");
+          // ログイン画面へ
+          window.location.href = "/login";
+        } else {
+          alert(`登録失敗：${data.message}`);
+        }
+      } catch (error) {
+        console.error("通信エラー:", error);
+        alert("サーバーに接続できませんでした。");
+      }
+    });
+  </script>
+</body>
+</html>

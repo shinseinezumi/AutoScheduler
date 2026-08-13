@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>メール内容 - 管理画面</title>
+  <style>
+    :root{--bg:#f7fafc;--card:#ffffff;--muted:#6b7280;--accent:#0b5fff}
+    body{font-family:Inter, system-ui, -apple-system, "Helvetica Neue", Arial; background:var(--bg); margin:0; color:#111}
+    .container{max-width:980px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .secondary{background:transparent;color:var(--accent);border:1px solid rgba(11,95,255,0.12)}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(11,32,128,0.06);margin-bottom:14px}
+    .meta{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:14px}
+    .body{white-space:pre-wrap;margin-top:12px;font-size:15px;line-height:1.6}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .small{padding:6px 10px;font-size:14px}
+    .panel{display:flex;gap:12px;margin-top:12px}
+    .col{flex:1}
+    .task-list{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+    .task{padding:10px;border-radius:8px;background:#fbfbff;border:1px solid #eef2ff}
+    .approved{background:#ecfdf5;border-color:#bbf7d0}
+    .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:#f1f5f9;color:#0f172a;font-size:13px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+    .translate-target{min-width:140px}
+    .result-box{padding:12px;border-radius:8px;background:#fff;border:1px dashed #e6eefc}
+
+    /* フォーム用追加スタイル */
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .form-control { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #e6eefc; box-sizing: border-box; }
+    .hidden { display: none; }
+    .form-container { background: #f8faff; padding: 16px; border-radius: 10px; border: 1px solid #e0e7ff; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="display:flex;align-items:center;gap:14px">
+        <button onclick=location.href="/mail" class="btn">管理画面に戻る</button>
+        <h2 style="margin:0;font-size:18px">メール内容（詳細）</h2>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+      </div>
+    </header>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-weight:600;font-size:15px" id="sender">送信者: <%= mail.from %></div>
+          <div class="meta"><div id="date"><%= mail.date %></div></div>
+        </div>
+      </div>
+
+      <div class="body" id="emailBody">
+        <%= mail.body %>
+      </div>
+
+      <div class="controls">
+        <select id="langSelect" class="translate-target small"></select>
+        <button type="button" class="btn small" id="translateBtn">翻訳</button>
+        <button type="button" class="btn small" id="summaryBtn">要約</button>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:12px">
+        <div class="col">
+          <div style="font-weight:600;margin-bottom:8px">翻訳結果</div>
+          <div class="result-box" id="translationResult">（まだ翻訳されていません）</div>
+          <div style="margin-top:10px;color:var(--muted);font-size:13px">
+            ※ 翻訳精度は実用に耐えうるものではありません。実運用の場合にはより高性能な有料APIの使用などが必要です。
+          </div>
+        </div>
+        <div class="col">
+          <div style="font-weight:600;margin-bottom:8px">要約</div>
+          <div class="result-box" id="summaryResult">（まだ要約されていません）</div>
+          <div style="margin-top:10px;color:var(--muted);font-size:13px">
+            ※ 使用可能なEC2インスタンスタイプ等の環境的制限があり、回答に４～５分程度かかります。実運用の場合にはより高性能なインスタンス、もしくは高性能な有料APIの利用などが必要です。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>タスク / スケジュール提案</strong>
+        <div style="display:flex;gap:8px">
+            <button type="button" class="btn small" id="addTaskOpen">タスクを手動追加</button>
+            <button type="button" class="btn small" id="addScheduleOpen">スケジュールを手動追加</button>
+        </div>
+      </div>
+
+      <div id="taskArea" class="task-list" aria-live="polite">
+        </div>
+
+      <form id="taskForm" class="form-container hidden">
+        <h4 style="margin-top:0">タスク登録</h4>
+        <div class="form-group">
+          <label for="taskTitle">タイトル</label>
+          <input name="title" id="taskTitle" class="form-control" placeholder="例: 資料作成" required />
+        </div>
+        <div class="form-group">
+          <label for="taskContent">内容詳細</label>
+          <textarea name="content" id="taskContent" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="taskDue">期限 (deadline)</label>
+          <input type="datetime-local" name="deadline" id="taskDue" class="form-control" />
+        </div>
+        <input type="hidden" name="is_completed" value="false">
+        
+        <div style="display:flex;gap:8px">
+          <button type="submit" class="btn small" id="addTaskBtn">保存</button>
+          <button type="button" class="secondary small cancel-form">キャンセル</button>
+        </div>
+      </form>
+
+      <form id="scheduleForm" class="form-container hidden">
+        <h4 style="margin-top:0">スケジュール登録</h4>
+        <div class="form-group">
+          <label for="schTitle">タイトル</label>
+          <input name="title" id="schTitle" class="form-control" placeholder="例: ○○様と打ち合わせ" required />
+        </div>
+        <div class="form-group">
+          <label for="schContent">内容詳細</label>
+          <textarea name="content" id="schContent" class="form-control" rows="3"></textarea>
+        </div>
+        <div style="display:flex;gap:12px">
+            <div class="form-group" style="flex:1">
+                <label for="schStart">開始日時</label>
+                <input type="datetime-local" name="start_datetime" id="schStart" class="form-control" required />
+            </div>
+            <div class="form-group" style="flex:1">
+                <label for="schEnd">終了日時</label>
+                <input type="datetime-local" name="end_datetime" id="schEnd" class="form-control" required />
+            </div>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <button type="submit" class="btn small" id="addScheduleBtn">保存</button>
+          <button type="button" class="secondary small cancel-form">キャンセル</button>
+        </div>
+      </form>
+
+      <div style="margin-top:10px;color:var(--muted);font-size:13px">
+        ※ 提案された項目を編集して登録、または手動で新規登録できます。
+      </div>
+    </section>
+
+    
+  </div>
+
+  <script src="/public/js/mail/detail.js"></script>
+</body>
+</html>

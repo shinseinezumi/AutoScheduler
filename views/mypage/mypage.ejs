@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>マイページ</title>
+  <style>
+    body {
+    font-family: "Hiragino Sans", sans-serif;
+    background-color: #f5f8fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    }
+
+    .container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 360px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #3b4d66;
+    }
+
+    .box {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    .box label {
+    font-weight: bold;
+    }
+
+    .box .info {
+    font-size: 18px;
+    font-weight: bold;
+    }
+
+    button {
+    background-color: #a4c6e5;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    }
+
+    button:hover {
+    background-color: #8bb5dc;
+    }
+
+    .back {
+    width: 100%;
+    padding: 10px;
+    background-color: #9cd1df;
+    font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>マイページ</h1>
+
+    <div class="box">
+      <label>ユーザー名</label>
+      <div class="info"><%=user.name %></div>
+    </div>
+
+    <div class="box">
+      <label>パスワード</label>
+      <button onclick="location.href='/changepassword'">パスワードを変更する</button>
+    </div>
+
+    <div class="box">
+      <label>メールアドレス</label>
+      <div class="info"><%=user.email_address %></div>
+      <button onclick="location.href='/change-email'">変更</button>
+    </div>
+
+    <div class="box">
+      <label>メール連携</label>
+      <% if (isAuth) { %>
+        <div class="info">連携済み</div>
+        <button id="deleteAuthButton">連携解除</button>
+      <% } else { %>
+        <div class="info">未連携</div>
+        <button id="authButton">連携</button>
+      <% } %>
+    </div>
+
+    <button class="back" onclick="location.href='/mainMenu'">戻る</button>
+  </div>
+</body>
+
+<script src="/public/js/mypage/mypage.js"></script>
+
+</html>

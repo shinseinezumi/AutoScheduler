@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>メール管理画面 - 管理画面</title>
+  <style>
+    :root{--bg:#f7fafc;--card:#fff;--accent:#0b5fff;--muted:#6b7280}
+    body{font-family:Inter,system-ui,-apple-system,"Helvetica Neue",Arial;background:var(--bg);margin:0;color:#111}
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(11,32,128,0.04)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:12px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:14px}
+    th{background:#fbfdff}
+    .subject{font-weight:600}
+    .preview{color:var(--muted);font-size:13px}
+    .meta{color:var(--muted);font-size:13px}
+    .actions button{margin-right:6px;padding:6px 8px;font-size:13px;border-radius:6px}
+    .topBtn{margin-right:8px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#0b5fff;font-size:12px}
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .pagination .btn {
+      min-width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn topBtn" id="mainMenuBtn">メインメニューに戻る</button>
+        <h1>メール管理画面</h1>
+      </div>
+      <div class="meta" style="margin-top:6px">受信トレイ / 総件数: <span id="totalCount">6</span></div>
+    </header>
+
+    <section class="card">
+      <table id="mailTable">
+        <thead>
+          <tr>
+            <th>件名</th>
+            <th>本文プレビュー</th>
+            <th>送信者</th>
+            <th>受信日</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JSでメール行を生成 -->
+        </tbody>
+      </table>
+    </section>
+
+    <div class="pagination">
+      <button class="btn" id="prevBtn">戻る</button>
+      <div id="pageNumber"></div>
+      <button class="btn" id="nextBtn">次へ</button>
+    </div>
+    
+  </div>
+
+  <script>
+    const mails = [
+      {id:'MSG-001', subject:'見積書の送付', sender:'sales@company.co.jp', body:'先日はお問い合わせありがとうございます。見積書を添付いたします...', date:'2025-10-24 11:42'},
+      {id:'MSG-002', subject:'会議日程の確認', sender:'nakamura@example.com', body:'来週の会議ですが、以下の時間で調整可能でしょうか...', date:'2025-10-23 09:15'},
+      {id:'MSG-003', subject:'契約書の修正依頼', sender:'legal@partner.jp', body:'契約書の第5条について修正案を提案します。ご確認ください。', date:'2025-10-22 16:02'},
+      {id:'MSG-004', subject:'障害報告（サービスA）', sender:'ops@infra.jp', body:'本日 14:20 頃より一部のお客様でログインできない障害が発生しております。', date:'2025-10-21 14:45'},
+      {id:'MSG-005', subject:'書類提出のお願い', sender:'hr@company.co.jp', body:'入社書類の提出期限が近づいております。下記をご確認ください。', date:'2025-10-20 08:30'},
+      {id:'MSG-006', subject:'お礼（打ち合わせ）', sender:'suzuki@client.jp', body:'先日の打ち合わせ、ありがとうございました。次回はさらに具体的に...', date:'2025-10-19 18:05'}
+    ];
+
+    const tbody = document.querySelector('#mailTable tbody');
+    function renderTable(){
+      tbody.innerHTML = '';
+      mails.forEach(m=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="subject">${escapeHtml(m.subject)}</td>
+          <td class="preview">${escapeHtml(m.body.slice(0,60))}...</td>
+          <td>${escapeHtml(m.sender)}</td>
+          <td class="meta">${m.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('totalCount').textContent = mails.length;
+    }
+
+    function escapeHtml(s){ return (s+'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    renderTable();
+
+    // メインメニューに戻るボタン（デモ）
+    document.getElementById('mainMenuBtn').addEventListener('click', ()=>{
+      alert('メインメニューに戻ります（デモ）');
+    });
+  </script>
+</body>
+</html>

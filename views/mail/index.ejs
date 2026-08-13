@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>メール管理画面 - 管理画面</title>
+  <style>
+    :root{--bg:#f7fafc;--card:#fff;--accent:#0b5fff;--muted:#6b7280}
+    body{font-family:Inter,system-ui,-apple-system,"Helvetica Neue",Arial;background:var(--bg);margin:0;color:#111}
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(11,32,128,0.04)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:12px;border-bottom:1px solid #f1f5f9;text-align:left;font-size:14px}
+    th{background:#fbfdff}
+    .subject{font-weight:600}
+    .preview{color:var(--muted);font-size:13px}
+    .meta{color:var(--muted);font-size:13px}
+    .actions button{margin-right:6px;padding:6px 8px;font-size:13px;border-radius:6px}
+    .topBtn{margin-right:8px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#0b5fff;font-size:12px}
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .pagination .btn {
+      min-width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="/mainMenu"><button class="btn topBtn" id="mainMenuBtn">メインメニューに戻る</button></a>
+        <h1>メール管理画面</h1>
+      </div>
+      <div class="meta" style="margin-top:6px">受信トレイ / 総件数:<%= mailCount %></div>
+    </header>
+
+    <section class="card">
+      <table id="mailTable">
+        <thead>
+          <tr>
+            <th>件名</th>
+            <th>本文プレビュー</th>
+            <th>送信者</th>
+            <th>受信日</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- メール行を生成 -->
+          <% mails.forEach(m => { %>
+            <tr>
+              <td class="subject"><%= m.subject %></td>
+              <td class="preview"><a href="/mail/detail/<%- m.id%>"><%= m.snippet %></a></td>
+              <td><%= m.from %></td>
+              <td class="meta"><%= m.date %></td>
+            </tr>
+          <% })%>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="pagination">
+      <% const totalPages = Math.ceil(mailCount / 20);%>
+      <% if(page-1 > 0){%>
+        <a href="./<%=page-1%>"><button class="btn" id="prevBtn">戻る</button></a>
+      <% }%>
+      <div id="pageNumber">
+        <%
+          for(let i = page-2; i <= page+2; i++){
+            if (i < 1 || totalPages < i) continue;
+        %>
+          <a href="./<%=i%>"><%=i%></a>
+        <% } %>
+      </div>
+      <% if(page+1 <= totalPages){%>
+        <a href="./<%=page+1%>"><button class="btn" id="nextBtn">次へ</button></a>
+      <% } %>
+    </div>
+    
+  </div>
+
+  <script src="/public/js/mail/index.js"></script>
+</body>
+</html>

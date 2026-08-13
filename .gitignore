@@ -1,0 +1,7 @@
+node_modules/
+dao/dao_backup.js
+db/database.db
+api/venv
+api/db
+api/__pycache__
+.env

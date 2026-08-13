@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スケジュールカレンダー</title>
+  <style>
+    body { font-family:"Segoe UI","Meiryo"; background:#f7f9fb; margin:30px; color:#333; }
+    h1 { text-align:center; color:#2c3e50; }
+    .calendar { max-width:800px; margin:30px auto; background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+    .calendar-header button { background:#3498db; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; }
+    .calendar-header button:hover { background:#2980b9; }
+    .backButton { background:#3498db; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; }
+    table { width:100%; border-collapse:collapse; }
+    th { color:#555; padding:10px 0; }
+    td { width:14.2%; height:90px; text-align:right; vertical-align:top; border:1px solid #ddd; position:relative; padding:6px; cursor:pointer; }
+    td:hover { background:#f1f8ff; }
+    .today { background:#e8f4ff; border:2px solid #3498db; }
+    .event { 
+      font-size:0.8em; 
+      background:#f39c12; 
+      color:white; 
+      border-radius:4px; 
+      padding:2px 4px; 
+      margin-top:2px;
+      text-align:left; 
+    }
+
+    /* 土日用 */
+    .sun { color:#e74c3c; }  /* 日曜 */
+    .sat { color:#2980b9; }  /* 土曜 */
+  </style>
+</head>
+<body>
+<h1>スケジュールカレンダー</h1>
+<button onclick=location.href="../mainMenu" class="backButton">戻る</button>
+<div class="calendar">
+  <div class="calendar-header">
+    <button id="prevMonth">＜ 前の月</button>
+    <h2 id="monthYear"></h2>
+    <button id="nextMonth">次の月 ＞</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
+      </tr>
+    </thead>
+    <tbody id="calendarBody"></tbody>
+  </table>
+</div>
+
+<!-- サーバーから渡された Schedule 配列を埋め込む -->
+<script id="events-data" type="application/json">
+  <%- JSON.stringify(events) %>
+</script>
+
+<script>
+  // 生の Schedule 配列（DAOからそのままの形）
+  const rawEvents = JSON.parse(document.getElementById("events-data").textContent);
+
+  
+  const events = rawEvents.map(e => {
+    // start_datetime: "2025-11-20 10:00" と仮定
+    const datePart = e.start_datetime ? e.start_datetime.substring(0, 10) : "" ;  // YYYY-MM-DD
+    const timePart = e.start_datetime ? e.start_datetime.substring(11,16) : ""; // "HH:MM"
+
+    return {
+      id: e.id,
+      date: datePart, // ← filter で使うキー
+      title: timePart ? `${e.title} ${timePart}〜` : e.title
+    };
+  });
+
+  const today = new Date();
+  let currentMonth = today.getMonth();
+  let currentYear = today.getFullYear();
+  const monthYear = document.getElementById("monthYear");
+  const calendarBody = document.getElementById("calendarBody");
+
+  function renderCalendar(year, month){
+    calendarBody.innerHTML = "";
+    const firstDay = new Date(year, month).getDay();
+    const daysInMonth = new Date(year, month +1, 0).getDate();
+    monthYear.textContent = `${year}年 ${month+1}月`;
+
+    let date = 1;
+    for(let i=0;i<6;i++){
+      const row = document.createElement("tr");
+      for(let j=0;j<7;j++){
+        const cell = document.createElement("td");
+
+        // 曜日ごとのクラス（日:0, 土:6）
+        if (j === 0) cell.classList.add("sun");
+        if (j === 6) cell.classList.add("sat");
+
+        if(i === 0 && j < firstDay){ 
+          cell.textContent = "";
+        } else if(date > daysInMonth){ 
+          break; 
+        } else{
+          const fullDate = `${year}-${String(month+1).padStart(2,"0")}-${String(date).padStart(2,"0")}`;
+          cell.textContent = date;
+
+          if(fullDate === today.toISOString().split("T")[0]) {
+            cell.classList.add("today");
+          }
+
+          // ★ LocalStorage時代のロジックに合わせる
+          const dayEvents = events.filter(e => e.date === fullDate);
+
+          if(dayEvents.length > 0){
+            dayEvents.forEach(e => {
+              const ev = document.createElement("div");
+              ev.className = "event";
+              ev.textContent = e.title;
+              cell.appendChild(ev);
+            });
+
+            // 予定あり → dailyList ページへ
+            cell.addEventListener("click", ()=>{
+              window.location.href = `/schedule/dailyList/${fullDate}`;
+            });
+
+          } else {
+            // 予定なし → form ページへ
+            cell.addEventListener("click", ()=>{
+              window.location.href = `/schedule/form/${fullDate}`;
+            });
+          }
+
+          date++;
+        }
+        row.appendChild(cell);
+      }
+      calendarBody.appendChild(row);
+    }
+  }
+
+  document.getElementById("prevMonth").addEventListener("click", ()=>{
+    currentMonth--;
+    if(currentMonth < 0){ currentMonth = 11; currentYear--; }
+    renderCalendar(currentYear, currentMonth);
+  });
+
+  document.getElementById("nextMonth").addEventListener("click", ()=>{
+    currentMonth++;
+    if(currentMonth > 11){ currentMonth = 0; currentYear++; }
+    renderCalendar(currentYear, currentMonth);
+  });
+
+  renderCalendar(currentYear, currentMonth);
+</script>
+</body>
+</html>

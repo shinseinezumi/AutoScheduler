@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+</head>
+
+<body>
+    <h1>AutoScheduler</h1>
+    <% if (messages && messages.length > 0) { %>
+        <ul>
+            <% messages.forEach(msg => { %>
+                <li style="color:red"><%= msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+    <form action="./login" method="post">
+        <p>メールアドレス</p>
+        <input type="mail" name="email" placeholder="メールアドレスを入力してください">
+        <p>パスワード</p>
+        <input type="password" name="password" placeholder="パスワードを入力してください">
+        <br>
+        <input type="submit" value="ログイン">
+        <button type="button" onclick="location.href='./signup'">新規登録</button>
+    </form>
+</body>
+
+<script src="/public/js/login/login.js"></script>
+
+</html>

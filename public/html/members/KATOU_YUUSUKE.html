@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>自己紹介 — 卒業制作・学生生活・目標</title>
+  <style>
+    :root{
+      --bg:#f7f9fb;
+      --card:#ffffff;
+      --accent:#2563eb;
+      --muted:#6b7280;
+      --radius:12px;
+      font-family: "Segoe UI", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+    }
+    body{
+      margin:0;
+      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 100%);
+      color:#111827;
+      -webkit-font-smoothing:antialiased;
+    }
+    header{
+      padding:28px 20px;
+      text-align:center;
+      background:transparent;
+    }
+    .container{
+      max-width:900px;
+      margin:20px auto;
+      padding:20px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+      padding:20px;
+      margin-bottom:18px;
+    }
+    h1{ margin:0 0 6px; font-size:1.6rem; color:var(--accent); }
+    h2{ margin:0 0 8px; font-size:1.1rem; color:#0f172a; }
+    p{ margin:8px 0; line-height:1.7; color:#111827; }
+    .muted{ color:var(--muted); font-size:0.95rem; }
+    .tags{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+    .tag{ background:#eef2ff; color:var(--accent); padding:6px 10px; border-radius:999px; font-size:0.9rem; }
+    footer{ text-align:center; color:var(--muted); font-size:0.9rem; margin:18px 0 40px; }
+    /* Responsive */
+    @media (max-width:640px){
+      .container{ padding:12px; }
+      h1{ font-size:1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="card" style="text-align:left;">
+        <h1>自己紹介（名前：加藤侑哉）</h1>
+        <div class="tags" aria-hidden="true">
+          <span class="tag">Web開発</span>
+          <span class="tag">Java / Eclipse</span>
+          <span class="tag">Express / EJS</span>
+          <span class="tag">カレンダー開発</span>
+          <a href="/public/html/members/index.html">メニューに戻る</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <!-- 自己紹介 -->
+    <section class="card" id="about-me" aria-labelledby="about-me-heading">
+      <h2 id="about-me-heading">自己紹介</h2>
+      <p>
+        初めまして、加藤侑哉です。Web系の開発に興味があり、専門学校でプログラミングの基礎を学びながら卒業制作では実用的なWebアプリを作成しました。
+        趣味は映画鑑賞（特に相棒や科捜研の女などの刑事ドラマ系やアニメ映画）、漫画（異世界・転生・ファンタジー系）、そして旅行です。
+        戦略ゲーム（例：Call of War）も好きで、休日はゲームやアニメでリラックスしています。
+      </p>
+    </section>
+
+    <!-- 卒業制作で学んだこと -->
+    <section class="card" id="graduation-project" aria-labelledby="graduation-project-heading">
+      <h2 id="graduation-project-heading">卒業制作で学んだこと</h2>
+      <p>
+        卒業制作では「スケジュール／カレンダー管理アプリ」を設計・実装しました。
+        フロントエンド（カレンダー表示・フォーム・詳細画面）はEJSやHTML/CSS/JavaScriptで作り、
+        サーバーサイドはNode.js + Expressでルーティングを実装しました。
+
+      </p>
+      <p class="muted">
+        具体的に卒業制作の中で行ったこと：
+      </p>
+      <ul>
+        <li>REST的なルーティング設計（/calendar /form /detail など）とビュー連携（EJS）</li>
+        <li>DAOパターンを使ったデータアクセス設計、テスト用データの取り扱い</li>
+        <li>セッション管理やバリデーション、複数イベントの表示と詳細編集機能の実装</li>
+        <li>デバッグとエラー解決（ビューのレンダリングエラーやデータの受け渡し問題の対処）</li>
+      </ul>
+      <p>
+        これらを通して「設計から実装、デバッグ、ユーザー操作の流れを考える力」が伸びたと思いますが、
+        まだまだ、自分には足りないところもあるのではないかと感じています。スケジュールに関することで
+        実際に作る際、デザインや機能などで自分自身が納得できるものが完成するまでがとても大変ではありました。
+      </p>
+    </section>
+
+    <!-- 大原学園で学んだ内容 -->
+    <section class="card" id="ohara-gakuen" aria-labelledby="ohara-gakuen-heading">
+      <h2 id="ohara-gakuen-heading">大原学園で学んだ内容</h2>
+      <p>
+        大原学園では基礎から応用まで実務に直結するスキルを学びました。主な学習内容は以下の通りです。
+      </p>
+      <ul>
+        <li>プログラミングの基礎（Java）と開発環境（Eclipse）に関する実践的な使い方</li>
+        <li>Webアプリケーションの基礎（HTML/CSS/JavaScript）とサーバーサイドの基礎概念</li>
+        <li>データベース（JDBC / MySQL）によるデータ永続化と連携方法</li>
+        <li>チーム開発やプロジェクト管理の基礎（設計書・レビュー・テストの重要性）</li>
+      </ul>
+      <p class="muted">
+        実機で手を動かすカリキュラムのおかげで、「学んだ知識を自分のプロジェクトに落とし込む力」が身につきました。
+      </p>
+    </section>
+
+    <!-- 学生生活の思い出 -->
+    <section class="card" id="student-life" aria-labelledby="student-life-heading">
+      <h2 id="student-life-heading">学生生活の思い出</h2>
+      <p>
+        学生生活では、学んだことがない様々なプログラミングを学びながら、わからないことがあれば仲間と
+        助け合った時間が印象に残っています。卒業制作では私自身が担当するスケジュール設計では、
+        多くの試行錯誤（ビューの表示問題、データの受け渡しミス、イベントの重複表示など）を経験し、何度もエラーの
+        修正や様々な問題を一つずつ解決していき友人の手助けも受けながら完成することができました。
+        私自身は、とても大変であったと感じ、完成させた作品をみて達成感がありました。
+
+      </p>
+      <p>
+                                                                                                                                                                                                                                                                          
+      </p>                                                                                                                       
+    </section>
+
+    <!-- 将来の目標 --><!--
+    <section class="card" id="future-goals" aria-labelledby="future-goals-heading">
+      <h2 id="future-goals-heading">将来の目標</h2>
+      <p>
+        今後の具体的な目標は次の通りです。
+      </p>
+      <ol>
+        <li>これから社会人として働くことになるので頑張っていこうと思っています。</li>
+        <li>個人的には、休暇を取ったリ、休日などでは旅で長崎・北海道などを訪れることも目標の一つです。</li>
+      </ol>
+    </section>
+    -->
+</body>
+</html>

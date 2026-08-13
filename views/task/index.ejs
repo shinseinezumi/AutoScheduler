@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>タスク管理システム</title>
+  <style>
+  /* セルの高さを固定＆折り返し時も横方向を優先 */
+  
+#taskTable td {
+  height: 50px; /* 高さを固定（調整可能） */
+  max-height: 50px;
+  overflow: hidden; /* はみ出た分は非表示 */
+  text-overflow: ellipsis; /* 省略記号 (…) 表示 */
+  white-space: nowrap; /* 折り返さず1行に保つ */
+}
+
+/* 変種中だけ折り返しOKにする */
+#taskTable td[contenteditable="true"]:focus {
+  white-space: normal;
+  overflow: visible;
+  height: auto; /* 編集中は伸びてもOK */
+  background-color: #eef7ff;
+  outline: 2px solid #3498db;
+}
+    body {
+  font-family: "Hiragino Sans", "Meiryo", sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  text-align: center;
+  padding: 40px;
+}
+
+h1 {
+  color: #2c3e50;
+  font-size: 28px;
+  margin-bottom: 25px;
+}
+
+table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 80%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+}
+
+th {
+  background-color: #469bd3;
+  color: white;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+td[contenteditable="true"]:focus {
+  outline: 2px solid #3498db;
+  background-color: #eef7ff;
+}
+
+/* ボタン全般 */
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 10px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #5b96bd;
+}
+
+/* 全選択ボタン */
+#select-all {
+  background-color: #3fad6d;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+#select-all:hover {
+  background-color: #27ae60;
+}
+
+/* ボタンエリア中央配置 */
+.button-area {
+  margin-top: 20px;
+}
+
+/* チェックボックス中央配置 */
+#taskTable input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+  </style>
+</head>
+
+<body>
+  <h1>タスク管理システム</h1>
+<table id="taskTable" border="1" style="width:50%; max-width: 1500px">
+  <tr>
+    <th>☑選択<br><input type="button" id="select-all" value="全選択"></th>
+    <th>タイトル</th>
+    <th>内容</th>
+    <th>期日</th>
+    <th>ステータス</th>
+  </tr>
+  <tr>
+    <td><input type="checkbox" class="row-check"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+  </tr>
+</table>
+
+<div class="button-area">
+  <button id="addButton" type="button">追加</button>
+  <button id="deleteButton" type="button">削除</button> 
+</div>
+
+<button class="back" onclick="location.href='/mainMenu'">戻る</button>
+
+<script src="/public/js/task.js"></script>
+
+</body>
+</html>

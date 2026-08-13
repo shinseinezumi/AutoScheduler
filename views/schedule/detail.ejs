@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>予定詳細・編集</title>
+<style>
+body { font-family:"Segoe UI","Meiryo"; background:#f5f6f7; margin:0; padding:0; color:#333; }
+header { background:#1e2a38; color:white; text-align:center; padding:15px 0; font-size:1.3em; font-weight:bold; }
+form { max-width:500px; margin:40px auto; background:#fff; padding:25px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); display:flex; flex-direction:column; gap:12px; }
+label { font-weight:bold; } 
+input, textarea { padding:10px; font-size:15px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; } 
+textarea { resize:vertical; min-height:80px; }
+.button-group { display:flex; justify-content:space-between; gap: 20px; margin-top:15px; }
+.save-btn { width:48%; border:none; border-radius:6px; padding:10px; font-size:16px; cursor:pointer; background:#2c3e50; color:white; }
+.save-btn:hover { background:#1a252f; }
+.delete-btn { width:48%; border:none; border-radius:6px; padding:10px; font-size:16px; cursor:pointer; background:#e74c3c; color:white; }
+.delete-btn:hover { background:"c0392b" }
+.cancel-btn { width:48%; border:none; border-radius:6px; padding:10px; font-size:16px; cursor:pointer; background:#ccc; color:#333; }
+.cancel-btn:hover { background:#b3b3b3; }
+footer { text-align:center; margin-top:40px; color:#666; font-size:0.9em; }
+</style>
+</head>
+<body>
+
+<header>予定詳細・編集</header>
+
+<form method="POST" action="/schedule/detail/<%= schedule.id %>">
+  <label>タイトル</label>
+  <input type="text" name="title" value="<%= schedule.title %>" required>
+
+  <label>開始日時</label>
+  <input type="datetime-local" name="start_datetime" value="<%= schedule.start_datetime %>" required>
+
+  <label>終了日時</label>
+  <input type="datetime-local" name="end_datetime" value="<%= schedule.end_datetime %>" required>
+
+  <label>メモ</label>
+  <textarea name="memo"><%= schedule.content %></textarea>
+
+  <div class="button-group">
+    <button type="button" class="cancel-btn" onclick="location.href='/schedule/dailyList/<%= schedule.start_datetime.split('T')[0] %>'">キャンセル</button>
+    <button form="delete" type="submit" class="delete-btn" onclick="location.href='/schedule/delete/<%= schedule.id%>'">削除</button>
+    <button type="submit" class="save-btn">保存</button>
+  </div>
+</form>
+
+<form id="delete" method="POST" action="/schedule/delete/<%= schedule.id %>"></form>
+
+<footer>© 2025 AutoScheduler</footer>
+
+</body>
+</html>

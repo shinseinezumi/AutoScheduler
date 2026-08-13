@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <!--タスクテーブル一覧-->
+  <table id="taskTable" border="1">
+    <caption>
+      タスクテーブル一覧
+    </caption>
+    <thead id="taskTableHead">
+      <tr>
+        <th>タイトル</th>
+        <th>内容</th>
+        <th>期限</th>
+      </tr>
+    </thead>
+    <tbody id="taskTableBody"></tbody>
+  </table>
+  <button id="updateTaskTableButton">更新</button>
+
+  <p>タスク追加</p>
+  <input type="text" id="title" placeholder="タイトル">
+  <input type="text" id="content" placeholder="内容">
+  <input type="datetime-local" id="deadline">
+  <button id="addTaskButton">追加</button>
+
+  <script src="/public/js/test/daoTask.js"></script>
+</body>
+</html>

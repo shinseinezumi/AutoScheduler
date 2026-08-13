@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>熊澤公太</title>
+  <link rel="stylesheet" href="/public/css/members/KUMAZAWA_KOUTA.css">
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>熊澤公太</h1>
+    <div class="subtitle">サブリーダー</div>
+  </header>
+
+  <div>
+    <a href="/public/html/members/index.html" class="btn-back">メニューに戻る</a>
+  </div>
+
+  <section class="card">
+    <h2>自己紹介</h2>
+    <p>
+      今回の卒業制作ではサブリーダーとして、システムの設計からインフラ構築、フロントエンド・バックエンドの基盤実装まで幅広く担当しました。
+      「チームメンバーが迷わず開発できる土台」を作ることを最優先し、技術的なリードとドキュメント整備、全体のコード品質の管理に注力しました。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>卒業制作での実績・担当機能</h2>
+    
+    <h3>サーバー構成の構築</h3>
+    <p>
+      メインのサーバーとして <strong>Express (Node.js)</strong> を採用しつつ、AI（自然言語処理）との親和性を考慮して <strong>FastAPI (Python)</strong> を導入。
+      翻訳APIやAIによるメール要約、タスク・スケジュールの自動提案機能を統合し、言語の特性を活かしたマルチサーバー構成を構築しました。
+    </p>
+
+    <h3>データベース・基盤設計</h3>
+    <p>
+      早期に開発サイクルを回すため、軽量な <strong>SQLite</strong> を採用。メンバーがスムーズに開発に入れるよう、当初はダミーデータでの運用から始め、関数の中身を書き換えるだけでDB移行ができる疎結合な設計を試みました。
+      セッション管理など含め、システムの基盤を整備し、他のメンバーが汎用的に利用できる形で提供できるように心掛けました。
+    </p>
+
+    <h3>チームの技術サポート</h3>
+    <p>
+      DB操作（エンドポイントの仕様）をまとめた解説資料をWordで作成・配布しました。
+      また、ログインページのログイン機能の実装や、難易度の高いDB連携箇所については必要に応じて自らコードを記述・修正し、チーム全体の進捗をバックアップしました。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>開発を通じて得た教訓と内省</h2>
+    <div class="reflection-grid">
+      <div class="note">
+        <span class="note-title">サブリーダーとして</span>
+        「どこまでメンバーに任せていいのか」「納得できない品質になるのが怖い」という不安から、多くのタスクを自分で抱え込んでしまう場面がありました。
+        全員が手持ち無沙汰にならないようタスクを振る難しさを痛感し、リーダーシップにおける「信頼と委任」の重要性を学びました。
+      </div>
+
+      <div class="note">
+        <span class="note-title">他人のコードと自分のコード</span>
+        他人のコードを読み解き修正する難しさを経験すると同時に、規模が大きくなるにつれ「過去の自分が書いたコード」すら忘れてしまうという初めての感覚を味わいました。
+        可読性の高いコード設計が、自分とチームの助けになることを痛感しました。
+      </div>
+
+      <div class="note">
+        <span class="note-title">柔軟な設計の重要性</span>
+        AIのライブラリ選定（pipelineからOllamaへの変更）など、仕様変更が容易に想像できる箇所において、JSONのやり取りを介した疎結合な設計を意識しました。
+        未知の技術を扱うからこそ、依存性を最小限にする設計思考の大切さを学びました。
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>学校で学習した内容</h2>
+    <ul>
+      <li>Webアプリケーション開発の基礎（HTML, CSS, JavaScript）</li>
+      <li>各種プログラミング言語の習得（Python, Java等）</li>
+      <li>リレーショナルデータベースの設計とSQL操作</li>
+    </ul>
+    <p>
+      学校での学習をベースにしつつ、今回の卒業制作では「実践的なAPI構築」「OAuth認証」「AI連携」といった、より高度な開発に自ら挑戦しました。
+    </p>
+  </section>
+</div>
+
+</body>
+</html>
