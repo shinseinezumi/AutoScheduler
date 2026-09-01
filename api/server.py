@@ -38,7 +38,7 @@ OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 @app.post("/aitest")
 async def aitest(request: MailRequest):
   payload = {
-    "model": "llama3.1:8b",
+    "model": "phi3:mini",
     "prompt": "Hello",
     "stream": False
   }
