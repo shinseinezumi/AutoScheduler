@@ -1,9 +1,0 @@
-TEST=false
-AUTO_LOGIN=false
-
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
-SESSION_SECRET=
-
-DB_FILE=./db/database.db
