@@ -8,6 +8,7 @@ from datetime import datetime
 import traceback
 
 import os
+import logging
 
 app = FastAPI()
 
@@ -22,6 +23,8 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"],
 )
+
+logger = logging.getLogger(__name__)
 
 # Phi-2-mini を pipeline で読み込み
 #model = pipeline(
@@ -109,11 +112,44 @@ async def summarize(request: MailRequest):
       # AIが返した文字列としてのJSONをPythonオブジェクトに変換する
       import json
       return json.loads(ai_response["response"])
+  
+  except httpx.HTTPStatusError as e:
+    logger.error(
+      "Ollama API error: status=%s, response=%s",
+      e.response.status_code,
+      e.response.text
+    )
+
+    raise HTTPException(
+      status_code=502,
+      detail="AIサーバーでエラーが発生しました"
+    )
+
+  except httpx.RequestError as e:
+    logger.error(
+      "Ollama connection error: %s",
+      str(e)
+    )
+
+    raise HTTPException(
+      status_code=503,
+      detail="AIサーバーに接続できません"
+    )
+
+  except(json.JSONDecodeError, KeyError) as e:
+    logger.error(
+      "Invaild AI response: %s",
+      str(e)
+    )
+
+    raise HTTPException(
+      status_code=502,
+      detail="AIの応答を正しく処理できませんでした"
+    )
     
   except Exception as e:
-    import traceback
-    traceback.print_exc()
-    raise HTTPException(status_code=500, detail="AI解析に失敗しました")
+    logger.exception("Unexpected error during AI summarization")
+    raise HTTPException(status_code=500, detail="AI解析中に予期しないエラーが発生しました")
   
   #result = await asyncio.to_thread(model, prompt, max_new_tokens=100, pad_token_id=50256)
   #text = result[0]["generated_text"]
