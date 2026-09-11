@@ -35,7 +35,6 @@ class TranslateRequest(BaseModel):
   text: str
   target: str
   
-OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 OLLAMA_URL = os.getenv("API_OLLAMA_URL")
 
 @app.post("/aitest")
