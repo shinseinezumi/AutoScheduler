@@ -7,6 +7,8 @@ from datetime import datetime
 
 import traceback
 
+import os
+
 app = FastAPI()
 
 origins = [
@@ -34,6 +36,7 @@ class TranslateRequest(BaseModel):
   target: str
   
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+OLLAMA_URL = os.getenv("API_OLLAMA_URL")
 
 @app.post("/aitest")
 async def aitest(request: MailRequest):
