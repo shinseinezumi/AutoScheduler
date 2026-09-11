@@ -5,3 +5,4 @@ api/venv
 api/db
 api/__pycache__
 .env
+start-dev.bat
