@@ -3,7 +3,21 @@ services:
     volumes:
       - .:/app
       - node_modules:/app/node_modules
+    networks:
+      - ai-network
+    
 
   api:
     volumes:
       - ./api:/app
+    networks:
+      - ai-network
+
+
+networks:
+  ai-network:
+    external: true
+    name: ai-network
+
+volumes:
+  node_modules:

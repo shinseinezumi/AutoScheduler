@@ -91,7 +91,7 @@ async def summarize(request: MailRequest):
   """
   
   payload = {
-    "model": "phi3:mini",
+    "model": "richardyoung/qwen3-8b-abliterated:Q4_K_M",
     "prompt": prompt,
     "stream": False,  # 逐次表示ではなく一括で受け取る
     "format": "json",  # JSON形式を強制する
