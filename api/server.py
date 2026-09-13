@@ -37,6 +37,18 @@ class MailRequest(BaseModel):
 class TranslateRequest(BaseModel):
   text: str
   target: str
+
+def getPayload(prompt):
+  payload = {
+    "model": "richardyoung/qwen3-8b-abliterated:Q4_K_M",
+    "prompt": prompt,
+    "stream": False,  # 逐次表示ではなく一括で受け取る
+    "format": "json",  # JSON形式を強制する
+    "options":{
+      "temperature": 0.1  # 創造性を下げて、ロジックを正確にする
+    }
+  }
+  return payload
   
 OLLAMA_URL = os.getenv("API_OLLAMA_URL")
 
@@ -93,16 +105,12 @@ async def summarize(request: MailRequest):
     {request.text}
   """
   
-  payload = {
-    "model": "richardyoung/qwen3-8b-abliterated:Q4_K_M",
-    "prompt": prompt,
-    "stream": False,  # 逐次表示ではなく一括で受け取る
-    "format": "json",  # JSON形式を強制する
-    "options":{
-      "temperature": 0.1  # 創造性を下げて、ロジックを正確にする
-    }
-  }
-  
+  payload = getPayload(prompt)
+
+  AIResponse = await request2Ollama(payload)
+  return AIResponse
+
+async def request2Ollama(payload):
   try:
     async with httpx.AsyncClient(timeout=None) as client:
       resp = await client.post(OLLAMA_URL, json=payload)
@@ -191,23 +199,24 @@ LIBRE_URL = "http://127.0.0.1:5000/translate"
 
 @app.post("/translate")
 async def translate(request: TranslateRequest):
-  payload = {
-    "q": request.text,
-    "source": "auto",
-    "target": request.target,
-    "format": "text"
-  }
-  #print(payload)
+  prompt = f"""
+    あなたは優秀な秘書AIです。
+    
+    以下のメールを解析し、「{LANGUAGES[request.target]}」という言語に翻訳してください。
+
+    【出力フォーマット】
+    以下のJSON形式のみを出力してください。余計な解説は不要です。該当しない項目は null にしてください。
+    
+    {{
+      "translatedText": 翻訳されたメール本文
+    }}
+
+    【メール内容】
+    {request.text}
+  """
   
-  try:
-    limits = httpx.Limits(max_connections=1, max_keepalive_connections=0)
-    async with httpx.AsyncClient(limits=limits, timeout=30.0) as client:
-      resp = await client.post(LIBRE_URL, json=payload)
-      resp.raise_for_status()
-      data = resp.json()
-      return {"translatedText": data["translatedText"]}
-      
-  except Exception as e:
-    print("Translate API Error")
-    traceback.print_exc()
-    return {"error": repr(e)}
+  payload = getPayload(prompt)
+
+  AIResponse = await request2Ollama(payload)
+
+  return AIResponse
