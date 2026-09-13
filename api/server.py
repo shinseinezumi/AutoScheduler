@@ -7,6 +7,9 @@ from datetime import datetime
 
 import traceback
 
+import os
+import logging
+
 app = FastAPI()
 
 origins = [
@@ -21,6 +24,8 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
+logger = logging.getLogger(__name__)
+
 # Phi-2-mini を pipeline で読み込み
 #model = pipeline(
 #    "text-generation",
@@ -32,8 +37,20 @@ class MailRequest(BaseModel):
 class TranslateRequest(BaseModel):
   text: str
   target: str
+
+def getPayload(prompt):
+  payload = {
+    "model": "richardyoung/qwen3-8b-abliterated:Q4_K_M",
+    "prompt": prompt,
+    "stream": False,  # 逐次表示ではなく一括で受け取る
+    "format": "json",  # JSON形式を強制する
+    "options":{
+      "temperature": 0.1  # 創造性を下げて、ロジックを正確にする
+    }
+  }
+  return payload
   
-OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+OLLAMA_URL = os.getenv("API_OLLAMA_URL")
 
 @app.post("/aitest")
 async def aitest(request: MailRequest):
@@ -88,16 +105,12 @@ async def summarize(request: MailRequest):
     {request.text}
   """
   
-  payload = {
-    "model": "phi3:mini",
-    "prompt": prompt,
-    "stream": False,  # 逐次表示ではなく一括で受け取る
-    "format": "json",  # JSON形式を強制する
-    "options":{
-      "temperature": 0.1  # 創造性を下げて、ロジックを正確にする
-    }
-  }
-  
+  payload = getPayload(prompt)
+
+  AIResponse = await request2Ollama(payload)
+  return AIResponse
+
+async def request2Ollama(payload):
   try:
     async with httpx.AsyncClient(timeout=None) as client:
       resp = await client.post(OLLAMA_URL, json=payload)
@@ -107,11 +120,44 @@ async def summarize(request: MailRequest):
       # AIが返した文字列としてのJSONをPythonオブジェクトに変換する
       import json
       return json.loads(ai_response["response"])
+  
+  except httpx.HTTPStatusError as e:
+    logger.error(
+      "Ollama API error: status=%s, response=%s",
+      e.response.status_code,
+      e.response.text
+    )
+
+    raise HTTPException(
+      status_code=502,
+      detail="AIサーバーでエラーが発生しました"
+    )
+
+  except httpx.RequestError as e:
+    logger.error(
+      "Ollama connection error: %s",
+      str(e)
+    )
+
+    raise HTTPException(
+      status_code=503,
+      detail="AIサーバーに接続できません"
+    )
+
+  except(json.JSONDecodeError, KeyError) as e:
+    logger.error(
+      "Invaild AI response: %s",
+      str(e)
+    )
+
+    raise HTTPException(
+      status_code=502,
+      detail="AIの応答を正しく処理できませんでした"
+    )
     
   except Exception as e:
-    import traceback
-    traceback.print_exc()
-    raise HTTPException(status_code=500, detail="AI解析に失敗しました")
+    logger.exception("Unexpected error during AI summarization")
+    raise HTTPException(status_code=500, detail="AI解析中に予期しないエラーが発生しました")
   
   #result = await asyncio.to_thread(model, prompt, max_new_tokens=100, pad_token_id=50256)
   #text = result[0]["generated_text"]
@@ -153,23 +199,24 @@ LIBRE_URL = "http://127.0.0.1:5000/translate"
 
 @app.post("/translate")
 async def translate(request: TranslateRequest):
-  payload = {
-    "q": request.text,
-    "source": "auto",
-    "target": request.target,
-    "format": "text"
-  }
-  #print(payload)
+  prompt = f"""
+    あなたは優秀な秘書AIです。
+    
+    以下のメールを解析し、「{LANGUAGES[request.target]}」という言語に翻訳してください。
+
+    【出力フォーマット】
+    以下のJSON形式のみを出力してください。余計な解説は不要です。該当しない項目は null にしてください。
+    
+    {{
+      "translatedText": 翻訳されたメール本文
+    }}
+
+    【メール内容】
+    {request.text}
+  """
   
-  try:
-    limits = httpx.Limits(max_connections=1, max_keepalive_connections=0)
-    async with httpx.AsyncClient(limits=limits, timeout=30.0) as client:
-      resp = await client.post(LIBRE_URL, json=payload)
-      resp.raise_for_status()
-      data = resp.json()
-      return {"translatedText": data["translatedText"]}
-      
-  except Exception as e:
-    print("Translate API Error")
-    traceback.print_exc()
-    return {"error": repr(e)}
+  payload = getPayload(prompt)
+
+  AIResponse = await request2Ollama(payload)
+
+  return AIResponse

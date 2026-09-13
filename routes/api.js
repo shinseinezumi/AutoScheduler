@@ -2,7 +2,7 @@ const express = require("express");
 const { APIS } = require("googleapis/build/src/apis");
 const router = express.Router();
 
-const apiBaseUrl = "http://127.0.0.1:8000"
+const apiBaseUrl = process.env.API_BASE_URL;
 
 const handler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch((e) =>{
