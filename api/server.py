@@ -40,7 +40,7 @@ class TranslateRequest(BaseModel):
 
 def getPayload(prompt):
   payload = {
-    "model": "richardyoung/qwen3-8b-abliterated:Q4_K_M",
+    "model": AI_MODEL,
     "prompt": prompt,
     "stream": False,  # 逐次表示ではなく一括で受け取る
     "format": "json",  # JSON形式を強制する
@@ -51,6 +51,7 @@ def getPayload(prompt):
   return payload
   
 OLLAMA_URL = os.getenv("API_OLLAMA_URL")
+AI_MODEL = os.getenv("AI_MODEL")
 
 @app.post("/aitest")
 async def aitest(request: MailRequest):
